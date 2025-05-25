@@ -1,103 +1,130 @@
-import Image from "next/image";
+"use client";
+import Link from "next/link";
+import { useState } from "react";
 
 export default function Home() {
-	return (
-		<div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-			<main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-				<Image
-					className="dark:invert"
-					src="/next.svg"
-					alt="Next.js logo"
-					width={180}
-					height={38}
-					priority
-				/>
-				<ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-					<li className="mb-2 tracking-[-.01em]">
-						Get started by editing{" "}
-						<code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-							app/page.js
-						</code>
-						.
-					</li>
-					<li className="tracking-[-.01em]">
-						Save and see your changes instantly.
-					</li>
-				</ol>
+	const [longurl, setLongurl] = useState("");
+	const [shorturl, setShorturl] = useState("");
+	const [generated, setGenerated] = useState("");
 
-				<div className="flex gap-4 items-center flex-col sm:flex-row">
-					<a
-						className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-						href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						<Image
-							className="dark:invert"
-							src="/vercel.svg"
-							alt="Vercel logomark"
-							width={20}
-							height={20}
+	const handleGenerate = () => {
+		if (!longurl) {
+			alert("Please enter a valid URL to shorten.");
+			return;
+		}
+		if (!shorturl) {
+			alert("Please enter a name for the shortened URL.");
+			return;
+		}
+
+		const myHeaders = new Headers();
+		myHeaders.append("Content-Type", "application/json");
+
+		const raw = JSON.stringify({
+			longurl: longurl,
+			shorturl: shorturl,
+		});
+
+		const requestOptions = {
+			method: "POST",
+			headers: myHeaders,
+			body: raw,
+			redirect: "follow",
+		};
+
+		fetch("/api/generate", requestOptions)
+			.then((response) => response.json())
+			.then((result) => {
+				setGenerated(`${process.env.NEXT_PUBLIC_HOST}/${shorturl}`);
+				setLongurl("");
+				setShorturl("");
+				alert(result.message);
+			})
+			.catch((error) => console.error(error));
+
+		console.log("shorturl: " + shorturl);
+		console.log("Generating shortened URL:" + generated);
+	};
+
+	return (
+		<section id="shorten">
+			<div className="flex flex-col items-center justify-center min-h-[82vh] text-white">
+				<h2 className="text-5xl font-bold mb-4 underline underline-offset-6 decoration-4 decoration-blue-500 ">
+					Shorten Your Links, Amplify Your Reach
+				</h2>
+				<div className="w-lg  flex flex-col items-center justify-center my-4 p-8 rounded-md bg-gray-600 shadow-lg">
+					<h3 className="text-2xl font-semibold font-[monospace]">
+						Paste the URL to be shortened
+					</h3>
+					{/* <form
+						onSubmit={() => {
+							handleGenerate();
+							setLongurl("");
+							setShorturl("");
+						}}
+						className="flex flex-col w-full max-w-lg"
+					> */}
+
+					<div className="w-full max-w-lg flex flex-col gap-2 items-center justify-center mt-4">
+						<input
+							type="url"
+							placeholder="Enter your URL here"
+							value={longurl}
+							onChange={(e) => setLongurl(e.target.value)}
+							className="p-2 rounded-md bg-gray-700 text-white w-full mr-2"
+							required
 						/>
-						Deploy now
-					</a>
-					<a
-						className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-						href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						Read our docs
-					</a>
+						<input
+							type="text"
+							placeholder="Enter your URL name here"
+							value={shorturl}
+							onChange={(e) => setShorturl(e.target.value)}
+							className="p-2 rounded-md bg-gray-700 text-white w-full mr-2"
+							required
+						/>
+						<button
+							onClick={handleGenerate}
+							className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-md text-white font-semibold"
+						>
+							Shorten
+						</button>
+					</div>
+					{/* </form> */}
+					<p className="mt-1 text-sm text-gray-400">
+						Enter a valid URL to shorten it. For example:{" "}
+						<span className="text-blue-300">https://asherfraz.com/</span>
+					</p>
+					{generated && (
+						<div className="mt-4 w-full">
+							<p className="text-lg font-semibold mb-2">Shortened URL:</p>
+							<div className="flex items-center bg-gray-700 p-2 rounded-md">
+								{/* <input
+									type="text"
+									value={generated}
+									readOnly
+									className="flex-1 bg-transparent text-white outline-none"
+								/> */}
+								<Link
+									href={generated}
+									target="_blank"
+									className="flex-1 bg-transparent text-white outline-none"
+								>
+									{generated}
+								</Link>
+								<button
+									onClick={() => {
+										navigator.clipboard.writeText(generated);
+									}}
+									className="ml-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-md text-white font-semibold"
+								>
+									Copy
+								</button>
+							</div>
+						</div>
+					)}
 				</div>
-			</main>
-			<footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-				<a
-					className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-					href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<Image
-						aria-hidden
-						src="/file.svg"
-						alt="File icon"
-						width={16}
-						height={16}
-					/>
-					Learn
-				</a>
-				<a
-					className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-					href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<Image
-						aria-hidden
-						src="/window.svg"
-						alt="Window icon"
-						width={16}
-						height={16}
-					/>
-					Examples
-				</a>
-				<a
-					className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-					href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<Image
-						aria-hidden
-						src="/globe.svg"
-						alt="Globe icon"
-						width={16}
-						height={16}
-					/>
-					Go to nextjs.org →
-				</a>
-			</footer>
-		</div>
+				{/* main div end */}
+			</div>
+		</section>
 	);
 }
