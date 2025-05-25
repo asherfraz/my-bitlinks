@@ -32,7 +32,7 @@ export default function Home() {
 			redirect: "follow",
 		};
 
-		fetch("/api/generate", requestOptions)
+		fetch("/api/generate/post", requestOptions)
 			.then((response) => response.json())
 			.then((result) => {
 				setGenerated(`${process.env.NEXT_PUBLIC_HOST}/${shorturl}`);
