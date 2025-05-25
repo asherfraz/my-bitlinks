@@ -49,21 +49,13 @@ export default function Home() {
 	return (
 		<section id="shorten">
 			<div className="flex flex-col items-center justify-center min-h-[82vh] text-white">
-				<h2 className="text-5xl font-bold mb-4 underline underline-offset-6 decoration-4 decoration-blue-500 ">
+				<h2 className="text-5xl text-center font-bold mb-4 underline underline-offset-6 decoration-4 decoration-blue-500 ">
 					Shorten Your Links, Amplify Your Reach
 				</h2>
 				<div className="w-lg  flex flex-col items-center justify-center my-4 p-8 rounded-md bg-gray-600 shadow-lg">
-					<h3 className="text-2xl font-semibold font-[monospace]">
+					<h3 className="text-2xl text-center font-semibold font-[monospace]">
 						Paste the URL to be shortened
 					</h3>
-					{/* <form
-						onSubmit={() => {
-							handleGenerate();
-							setLongurl("");
-							setShorturl("");
-						}}
-						className="flex flex-col w-full max-w-lg"
-					> */}
 
 					<div className="w-full max-w-lg flex flex-col gap-2 items-center justify-center mt-4">
 						<input
@@ -89,7 +81,6 @@ export default function Home() {
 							Shorten
 						</button>
 					</div>
-					{/* </form> */}
 					<p className="mt-1 text-sm text-gray-400">
 						Enter a valid URL to shorten it. For example:{" "}
 						<span className="text-blue-300">https://asherfraz.com/</span>
@@ -98,12 +89,6 @@ export default function Home() {
 						<div className="mt-4 w-full">
 							<p className="text-lg font-semibold mb-2">Shortened URL:</p>
 							<div className="flex items-center bg-gray-700 p-2 rounded-md">
-								{/* <input
-									type="text"
-									value={generated}
-									readOnly
-									className="flex-1 bg-transparent text-white outline-none"
-								/> */}
 								<Link
 									href={generated}
 									target="_blank"
